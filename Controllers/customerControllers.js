@@ -7,9 +7,8 @@ require('dotenv').config()
 getAllCustomers = async (req,res) => {
     try {
         const customers = await Customer.find()
-        return res.status(200).render( 'allCustomers' ,{ customers } )
+        return res.status(200).json( { customers } )
     } catch (error) {
-        console.log(error.message);
         return res.status(400).json( { error : "could not get customers"} )      
     }
 }
@@ -23,7 +22,6 @@ try {
     const customers = await Customer.find().skip(skipValue).limit(pageSize)
     return res.status(200).json({ customers , currentPage: page, totalPages, totalCustomerCount })
 } catch (error) {
-    console.log(error.message);
     return res.status(400).json({ error: "could not get customers" })
     
 }
@@ -34,18 +32,16 @@ getSingleCustomer = async (req, res) => {
     const customer = await Customer.findById(id)
     res.status(200).json({customer})
     } catch (error) {
-        console.log(error.message);
         res.status(400).json({error : "could not get customer "})       
     }
 }
 getNewCustomer = async (req,res) => {
-    res.status(200).render('addCustomer',{customer: new Customer()})
+    res.status(200).json({customer: new Customer()})
 }
 getEditCustomer = async (req,res) => {
     const id = req.params.id
     let customer = await Customer.find({ _id : id})
-    console.log(customer);
-    res.status(200).render('addCustomer', {customer})
+    res.status(200).json({customer})
 }
 getSendEmail = async (req,res) => {
     res.status(200).json({email:'send email'})
@@ -74,7 +70,6 @@ postSendEmail = async (req,res) => {
     
         res.status(200).json({ message: 'Email sent successfully!' });
       } catch (error) {
-        console.error('Error sending email:', error.message);
         res.status(500).json({ error: 'Failed to send email.' });
       }
 }
@@ -84,7 +79,6 @@ postNewCustomer = async (req, res) => {
     await Customer.create({ name, email, isSubscribed, telephoneNumber, address })
     return res.status(200).redirect('/customer')
  } catch (error) {
-     console.log(error.message);
     res.status(400).json({error : "could not add customer to existing list"})       
  }
 }
